@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  .container-fluid
+    form.form-horizontal(role="form" method="post")
+      fieldset
+        legend= title
+        .form-group
+          label.col-sm-2.control-label(for="username") username
+          .col-sm-3
+            input#username.form-control(type="text" name="username")               
+        .form-group
+          label.col-sm-2.control-label(for="password") password
+          .col-sm-3
+            input#password.form-control(type="password" name="password")          
+        .form-group
+          .col-sm-offset-2.col-sm-3
+            button.btn.btn-primary(type="submit") login
+        
+        
+
