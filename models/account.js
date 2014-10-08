@@ -1,9 +1,15 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-module.exports = mongoose.model('Account',{
-  access_token:   String,
-  token_type:     String,
-  id_token:       String,
-  refresh_token:  String,
-  expiry_date:    Number,
+var schema = new Schema({
+  title:      String,
+  password:   String,
+  token: {
+    type: Schema.Types.ObjectId,
+    ref: 'Token'
+  }
 });
+
+var Account = mongoose.model('Account', schema, 'account');
+
+module.exports = Account;

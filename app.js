@@ -44,8 +44,8 @@ app.use(session({
 
 mongoose.connect('mongodb://localhost:27017/web-gmail');
 
-// app.use('/', routes);
-app.use('/', routerGmail);
+app.use('/', routes);
+app.use('/gmail', routerGmail);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
