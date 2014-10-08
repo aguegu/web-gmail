@@ -5,6 +5,7 @@ var logger = require('morgan');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -40,6 +41,9 @@ app.use(session({
   })
 }));
 
+
+mongoose.connect('mongodb://localhost:27017/web-gmail');
+
 // app.use('/', routes);
 app.use('/', routerGmail);
 app.use('/users', users);
@@ -57,11 +61,11 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-      res.status(err.status || 500);
-      res.render('error', {
-          message: err.message,
-          error: err
-      });
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
   });
 }
 
