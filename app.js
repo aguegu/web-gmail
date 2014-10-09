@@ -35,6 +35,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 var MongoStore = require('connect-mongo')(session);
 app.use(session({
   secret: "development",
+  resave: true,
+  saveUninitialized: true,
   cookie: {maxAge: 1000 * 60 * 60 * 24 * 14}, // 14 days
   store: new MongoStore({
     db: "web-gmail-session"
