@@ -33,6 +33,16 @@ router.get('/authorized', function (req, res) {
   });
 });
 
+var updateToken = function (token, token_new, next) {
+  if (token.access_token != token_new.access_token) {
+    Token.findByIdAndUpdate(token._id, token_new, function (err, doc) {
+      if (err)
+        return next(err);
+    });
+    // weird that findByIdAndUpdate only works if callback exists.
+  }
+};
+
 router.get('/register/:oid', function (req, res, next) {
   console.log(req.params.oid);
   Token.findById(req.params.oid, function (err, token) {
@@ -46,7 +56,8 @@ router.get('/register/:oid', function (req, res, next) {
     oc.setCredentials({
       expiry_date: token.expiry_date,
       access_token: token.access_token,
-      refresh_token: token.refresh_token
+      refresh_token: token.refresh_token,
+      id_token: token.id_token
     });
 
     google.plus('v1').people.get({ userId: 'me', fields: 'emails', auth: oc }, function(err, profile) {
@@ -57,19 +68,11 @@ router.get('/register/:oid', function (req, res, next) {
         return e.type == 'account'
       })[0].value;
 
-      if (token.access_token != oc.credentials.access_token) {
-        Token.findByIdAndUpdate(token._id, oc.credentials, function (err, doc) {
-          if (err)
-            return next(err);
-        });
-      }
-
-      // weird that findByIdAndUpdate only works if callback exists.
+      updateToken(token, oc.credentials, next);
 
       res.render('login', { title: 'Login', email: email, expiry_date: new Date(oc.credentials.expiry_date) });
     });
   });
 });
-
 
 module.exports = router;
