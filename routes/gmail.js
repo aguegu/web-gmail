@@ -42,23 +42,32 @@ router.get('/register/:oid', function (req, res, next) {
     if (!token)
       return next(Error({message: 'no such token', status: 404}));
 
+    var oc = new OAuth2(cs.client_id, cs.client_secret, cs.redirect_url);
+    oc.setCredentials({
+      expiry_date: token.expiry_date,
+      access_token: token.access_token,
+      refresh_token: token.refresh_token
+    });
 
-    oauth2Client.setCredentials(token);
-
-    google.plus('v1').people.get({ userId: 'me', fields: 'emails', auth: oauth2Client }, function(err, profile) {
+    google.plus('v1').people.get({ userId: 'me', fields: 'emails', auth: oc }, function(err, profile) {
       if (err)
-        return res.send.log('An error occured', err);
+        return next(err);
 
       var email = profile.emails.filter(function(e) {
         return e.type == 'account'
       })[0].value;
 
-      console.log(email);
+      if (token.access_token != oc.credentials.access_token) {
+        Token.findByIdAndUpdate(token._id, oc.credentials, function (err, doc) {
+          if (err)
+            return next(err);
+        });
+      }
 
-      res.render('login', { title: 'Login', email: email });
+      // weird that findByIdAndUpdate only works if callback exists.
+
+      res.render('login', { title: 'Login', email: email, expiry_date: new Date(oc.credentials.expiry_date) });
     });
-
-    // res.end('registered');
   });
 });
 

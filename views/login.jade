@@ -4,11 +4,11 @@ block content
   .container-fluid
     form.form-horizontal(role="form" method="post")
       fieldset
-        legend= title
+        legend #{title} #{expiry_date}
         .form-group
           label.col-sm-2.control-label(for="username") username
           .col-sm-3
-            input#email.form-control(type="text" name="title" value="#{email}" disabled)
+            input#email.form-control(type="text" name="title" value="#{email}" readonly)
         .form-group
           label.col-sm-2.control-label(for="password") password
           .col-sm-3
